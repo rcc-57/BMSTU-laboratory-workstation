@@ -18,7 +18,6 @@ This is a thin c-api wrapper programmatically generated for the excellent C++ im
 - Use dynamic Win32 LoadLibraryA bridge in e502_sim.c to load real x502api.dll and e502api.dll when present while keeping E502-SIM-0001/0002 virtual simulator devices available in the same binary [LCARD/e502_sim.c:55]
 
 ## Notes
-- cpp2ffi: opaque returns assign to static obj
 - cpp2ffi: add forced_nonPOD, skip_template, skip_convert_gen (cimnodes_editor work)
 - cpp2ffi: 3 scope corrections
 - cpp2ffi: split with cpp2ffi_extra.lua
@@ -28,6 +27,7 @@ This is a thin c-api wrapper programmatically generated for the excellent C++ im
 - Merge pull request #326 from JamesWrigley/header-test
 - cpp2ffi: overloaded name without ::
 - gotcha: E502_UsbGetSerialList ignores X502_GETDEVS_FLAGS_ONLY_NOT_OPENED and writes total count (>size) to devcnt; X502_AsyncGetAdcFrame internally starts/stops stream [LCARD/e502api.h]
+- New feature: feat: add E502 controller, simulation, CLI/GUI modules, and documentation [LCARD/USER_GUIDE.html]
 
 ## Key files
 - `README.md`
