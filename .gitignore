@@ -39,3 +39,8 @@ cimgui/x64/
 # Test / Build
 bld/
 build/
+
+.projectmem/events.jsonl
+.projectmem/watch.pid
+.projectmem/watch.log
+.projectmem/structure.json

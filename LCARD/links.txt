@@ -1,4 +1,9 @@
 https://www.lcard.ru/download/lpcie_setup.exe
 
-gcc -Wall -O2 -I"C:/Program Files/L-Card/x502/sdk/include" main_cli.c e502_ctrl.c -L "C:\Program Files (x86)\L-Card\lpcie\lib\mingw64" -lx502api -le502api -o stand_cli.exe
+# Сборка с реальным драйвером L-Card SDK:
+gcc -Wall -Wextra -O2 -I"C:/Program Files/L-Card/x502/sdk/include" main_cli.c e502_ctrl.c -L"C:/Program Files (x86)/L-Card/lpcie/lib/mingw64" -lx502api -le502api -lm -o stand_cli.exe
 
+# Сборка с имитатором искусственных сигналов (CLI, GUI и автотесты):
+gcc -Wall -Wextra -Werror -O2 main_cli.c e502_ctrl.c e502_sim.c -lm -o stand_cli.exe
+gcc -Wall -Wextra -Werror -O2 main_gui.c e502_ctrl.c e502_sim.c -lgdi32 -lcomctl32 -lm -mwindows -o stand_gui.exe
+gcc -Wall -Wextra -Werror -O2 test_stand.c e502_ctrl.c e502_sim.c -lm -o test_stand.exe

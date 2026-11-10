@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Руководство пользователя и справочник API — Лабораторный стенд L-Card E-502 (МГТУ им. Н.Э. Баумана)</title>
+<style>
+  :root {
+    --bg: #f1f5f9;
+    --paper: #ffffff;
+    --ink: #0f172a;
+    --muted: #475569;
+    --border: #cbd5e1;
+    --accent: #1e3a8a;
+    --accent-mid: #1d4ed8;
+    --accent-light: #eff6ff;
+    --code-bg: #0f172a;
+    --code-fg: #f8fafc;
+    --ok-bg: #dcfce7;
+    --ok-fg: #166534;
+    --warn-bg: #fef3c7;
+    --warn-fg: #92400e;
+    --err-bg: #fee2e2;
+    --err-fg: #991b1b;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+    line-height: 1.58;
+    font-size: 15px;
+  }
+
+  /* Верхняя шапка документа */
+  .top-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    color: #ffffff;
+    padding: 20px 32px;
+    border-bottom: 4px solid #3b82f6;
+  }
+  .top-header .inst {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #93c5fd;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .top-header h1 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 700;
+  }
+  .top-header .meta {
+    font-size: 13px;
+    color: #cbd5e1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  /* Горизонтальная панель быстрого перехода по главам */
+  .chapter-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    padding: 8px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+  }
+  .chapter-bar a {
+    color: #e2e8f0;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+  }
+  .chapter-bar a:hover {
+    background: #334155;
+    color: #ffffff;
+  }
+  .chapter-bar a.active-chap {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #60a5fa;
+  }
+  .chapter-bar .print-btn {
+    margin-left: auto;
+    background: #334155;
+    color: #f8fafc;
+    border: 1px solid #475569;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+  .chapter-bar .print-btn:hover { background: #475569; }
+
+  /* Двухколоночный макет с боковым оглавлением */
+  .layout {
+    max-width: 1440px;
+    margin: 20px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* Боковая панель навигации */
+  .sidebar {
+    position: sticky;
+    top: 56px;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    max-height: calc(100vh - 76px);
+    overflow-y: auto;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  }
+  .sidebar-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin: 0 0 10px 0;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--accent);
+  }
+  .nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav-list li { margin-bottom: 3px; }
+  .nav-list a {
+    display: block;
+    padding: 6px 10px;
+    font-size: 13px;
+    color: var(--ink);
+    text-decoration: none;
+    border-radius: 4px;
+    border-left: 3px solid transparent;
+  }
+  .nav-list a:hover {
+    background: var(--accent-light);
+    color: var(--accent-mid);
+  }
+  .nav-list a.active {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 700;
+    border-left-color: var(--accent-mid);
+  }
+  .nav-sub {
+    list-style: none;
+    padding-left: 12px;
+    margin: 2px 0 6px 0;
+  }
+  .nav-sub a {
+    font-size: 12px;
+    padding: 4px 8px;
+    color: var(--muted);
+    font-family: Consolas, monospace;
+  }
+
+  /* Основной контент */
+  .content {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 32px 40px;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+  }
+
+  .chapter-section {
+    scroll-margin-top: 64px;
+    padding-bottom: 28px;
+    margin-bottom: 36px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  .chapter-section:last-child { border-bottom: none; }
+
+  h2 {
+    font-size: 21px;
+    color: var(--accent);
+    border-bottom: 2px solid #cbd5e1;
+    padding-bottom: 8px;
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+  h3 {
+    font-size: 17px;
+    color: #1e293b;
+    margin-top: 24px;
+    margin-bottom: 10px;
+  }
+  h4 {
+    font-size: 15px;
+    color: #334155;
+    margin-top: 16px;
+    margin-bottom: 8px;
+  }
+  p { margin: 8px 0 12px 0; }
+
+  /* Таблицы */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 18px 0;
+    font-size: 13.5px;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 11px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #f8fafc;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  tr:nth-child(even) td { background: #fcfdff; }
+
+  code {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 13px;
+    background: #f1f5f9;
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+  }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    padding: 14px 18px;
+    border-radius: 5px;
+    overflow-x: auto;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1.48;
+    margin: 10px 0 16px 0;
+  }
+  pre code {
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 0;
+  }
+
+  /* Бейджи направления аргументов */
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    font-size: 11.5px;
+    font-weight: 700;
+    font-family: Consolas, monospace;
+    border-radius: 3px;
+  }
+  .badge-in { background: #dbeafe; color: #1e40af; }
+  .badge-out { background: #dcfce7; color: #166534; }
+  .badge-inout { background: #fef3c7; color: #92400e; }
+  .badge-hdr { background: #e0e7ff; color: #3730a3; }
+
+  /* Информационные блоки */
+  .callout {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent-mid);
+    padding: 12px 16px;
+    margin: 14px 0;
+    font-size: 14px;
+    border-radius: 0 4px 4px 0;
+  }
+  .callout-warn {
+    background: var(--warn-bg);
+    border-left: 4px solid #d97706;
+    color: var(--warn-fg);
+  }
+  .callout-ok {
+    background: var(--ok-bg);
+    border-left: 4px solid #16a34a;
+    color: var(--ok-fg);
+  }
+
+  /* Иллюстрации и скриншоты */
+  .screenshot-card {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+    margin: 16px 0;
+    text-align: center;
+  }
+  .screenshot-card img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #94a3b8;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+  }
+  .screenshot-caption {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* Интерактивные вкладки исследования блоков UI */
+  .ui-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .ui-tab-btn {
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    color: var(--ink);
+    padding: 8px 14px;
+    font-size: 13.5px;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .ui-tab-btn:hover { background: #e2e8f0; }
+  .ui-tab-btn.active {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+  .ui-panel {
+    display: none;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+  }
+  .ui-panel.active { display: block; }
+  .ui-panel-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .ui-panel-grid.wide-img {
+    grid-template-columns: 1fr;
+  }
+
+  /* Интерактивный каталог функций (Мастер-деталь + фильтр) */
+  .func-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+  }
+  .func-search {
+    flex: 1;
+    min-width: 240px;
+    padding: 8px 12px;
+    border: 1px solid #94a3b8;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  .func-filter-btn {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    padding: 7px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .func-filter-btn.active {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+
+  .func-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 18px;
+    background: #ffffff;
+    overflow: hidden;
+    scroll-margin-top: 70px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  }
+  .func-card-header {
+    background: #f8fafc;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+  .func-card-header:hover { background: #eff6ff; }
+  .func-card-title {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .func-card-body {
+    padding: 16px 20px;
+  }
+  .func-card.collapsed .func-card-body { display: none; }
+
+  /* Интерактивный симулятор вызовов API */
+  .sim-box {
+    background: #f8fafc;
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    padding: 20px;
+    margin: 18px 0;
+  }
+  .sim-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sim-field label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #1e293b;
+  }
+  .sim-field select, .sim-field input {
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid #94a3b8;
+    border-radius: 4px;
+    font-size: 13.5px;
+    font-family: Consolas, monospace;
+  }
+  .sim-result {
+    padding: 14px 16px;
+    border-radius: 5px;
+    font-weight: 600;
+    margin-top: 10px;
+  }
+
+  /* Кнопки перехода между главами внизу разделов */
+  .chapter-nav-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding-top: 12px;
+  }
+  .chap-step-btn {
+    display: inline-block;
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    text-decoration: none;
+    padding: 7px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .chap-step-btn:hover {
+    background: var(--accent-light);
+    border-color: var(--accent-mid);
+  }
+
+  @media (max-width: 1024px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; max-height: none; }
+    .ui-panel-grid { grid-template-columns: 1fr; }
+  }
+  @media print {
+    .chapter-bar, .sidebar, .func-toolbar, .sim-box, .chapter-nav-footer { display: none !important; }
+    .layout { display: block; }
+    .ui-panel { display: block !important; margin-bottom: 16px; }
+    .func-card.collapsed .func-card-body { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <div class="inst">МГТУ им. Н.Э. Баумана • Лабораторный практикум по автоматизации эксперимента</div>
+  <h1>Руководство пользователя и интерактивный справочник функций АПК L-Card E-502</h1>
+  <div class="meta">
+    <span><strong>Модуль оборудования:</strong> L-Card E-502 (USB 2.0 / 100BASE-TX Ethernet, 16 бит АЦП/ЦАП)</span>
+    <span><strong>Программный комплекс:</strong> <code>stand_gui.exe</code> / <code>stand_cli.exe</code> / <code>test_stand.exe</code></span>
+    <span><strong>Язык документации:</strong> Русский (ГОСТ 19.505-79)</span>
+  </div>
+</header>
+
+<!-- Верхняя закреплённая панель перехода по главам -->
+<nav class="chapter-bar" aria-label="Быстрый переход по главам">
+  <a href="#chap-1" class="chap-link active-chap">Глава 1. Архитектура стенда</a>
+  <a href="#chap-2" class="chap-link">Глава 2. Графический интерфейс (UI и фото)</a>
+  <a href="#chap-3" class="chap-link">Глава 3. Интерактивный справочник функций</a>
+  <a href="#chap-4" class="chap-link">Глава 4. Тренажёр вызовов API и ПЛИС</a>
+  <a href="#chap-5" class="chap-link">Глава 5. Методика лабораторной работы</a>
+  <a href="#chap-6" class="chap-link">Глава 6. Консольный режим (CLI) и тесты</a>
+  <button class="print-btn" onclick="window.print()">Печать / Сохранить в PDF</button>
+</nav>
+
+<div class="layout">
+  <!-- Боковое оглавление -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Содержание документа</div>
+    <ul class="nav-list">
+      <li><a href="#chap-1">1. Назначение и архитектура стенда</a></li>
+      <li>
+        <a href="#chap-2">2. Функциональность UI (окна и кнопки)</a>
+        <ul class="nav-sub">
+          <li><a href="#ui-full">Общий вид главного окна</a></li>
+          <li><a href="#ui-explorer">Интерактивный разбор блоков 1–5</a></li>
+          <li><a href="#ui-help-dlg">Встроенное окно справки</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#chap-3">3. Справочник пользовательских функций</a>
+        <ul class="nav-sub">
+          <li><a href="#fn-E502_StandInitStruct">E502_StandInitStruct</a></li>
+          <li><a href="#fn-E502_StandListUSB">E502_StandListUSB</a></li>
+          <li><a href="#fn-E502_StandConnectUSB">E502_StandConnectUSB</a></li>
+          <li><a href="#fn-E502_StandConnectIP">E502_StandConnectIP</a></li>
+          <li><a href="#fn-E502_StandDisconnect">E502_StandDisconnect</a></li>
+          <li><a href="#fn-E502_StandSetChannelCount">E502_StandSetChannelCount</a></li>
+          <li><a href="#fn-E502_StandConfigChannel">E502_StandConfigChannel</a></li>
+          <li><a href="#fn-E502_StandSetPullups">E502_StandSetPullups</a></li>
+          <li><a href="#fn-E502_StandApplyConfig">E502_StandApplyConfig</a></li>
+          <li><a href="#fn-E502_StandReadAdcFrame">E502_StandReadAdcFrame</a></li>
+          <li><a href="#fn-E502_StandWriteDac">E502_StandWriteDac</a></li>
+          <li><a href="#fn-E502_StandBlinkLed">E502_StandBlinkLed</a></li>
+          <li><a href="#fn-E502_StandGetErrorStr">E502_StandGetErrorStr</a></li>
+          <li><a href="#fn-E502_SimReset">E502_SimReset</a></li>
+          <li><a href="#fn-E502_SimSetPhySignal">E502_SimSetPhySignal</a></li>
+          <li><a href="#fn-E502_SimGetPhySignal">E502_SimGetPhySignal</a></li>
+          <li><a href="#fn-E502_SimStepTime">E502_SimStepTime / GetTime</a></li>
+          <li><a href="#fn-E502_SimInjectFault">E502_SimInjectFault / GetStats</a></li>
+        </ul>
+      </li>
+      <li><a href="#chap-4">4. Интерактивный тренажёр API и ПЛИС</a></li>
+      <li><a href="#chap-5">5. Порядок выполнения лабораторной работы</a></li>
+      <li><a href="#chap-6">6. Команды CLI и верификация</a></li>
+    </ul>
+  </aside>
+
+  <!-- Основное содержимое -->
+  <main class="content">
+
+    <!-- ==================== ГЛАВА 1 ==================== -->
+    <section id="chap-1" class="chapter-section">
+      <h2>Глава 1. Назначение и программная архитектура лабораторного стенда</h2>
+      <p>
+        Программный комплекс предназначен для управления 16-разрядным модулем аналого-цифрового и цифро-аналогового ввода-вывода
+        <strong>L-Card E-502</strong> в рамках учебных и исследовательских работ МГТУ им. Н.Э. Баумана.
+        Архитектура приложения разделена на три изолированных уровня, что позволяет выполнять лабораторные работы как на физическом стенде,
+        так и в режиме математической имитации сигналов без подключённого оборудования.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Модуль (файлы)</th>
+            <th>Уровень архитектуры</th>
+            <th>Назначение и решаемые задачи</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>e502_ctrl.h</code><br><code>e502_ctrl.c</code></td>
+            <td>Безопасный уровень управления оборудованием (Hardware Abstraction Layer)</td>
+            <td>
+              Инкапсулирует контекст устройства <code>E502_StandDevice</code>, защищает от утечек дескрипторов <code>t_x502_hnd</code>,
+              контролирует границы логической таблицы АЦП (<code>1..32</code>), совместимость физических входов (<code>0..15</code> для DIFF,
+              <code>0..31</code> для COMM), коэффициентов усреднения (<code>0..128</code>), масок подтяжки (<code>0x00..0x3F</code>)
+              и диапазона ЦАП (<code>-5.0..+5.0 В</code>).
+            </td>
+          </tr>
+          <tr>
+            <td><code>e502_sim.h</code><br><code>e502_sim.c</code></td>
+            <td>Математический имитатор физического тракта и API драйвера (<code>x502api</code> / <code>e502api</code>)</td>
+            <td>
+              Эмулирует 32 физических входа АЦП, 2 канала ЦАП, регистры ПЛИС (FPGA), дифференциальное вычитание
+              $U_{\text{DIFF}}(k) = U_{\text{phy}}(k) - U_{\text{phy}}(k+16)$, аппаратное усреднение шума в $\sqrt{\text{Avg}}$ раз,
+              ограничение по выбранному поддиапазону АЦП и обратную связь с ЦАП1/ЦАП2.
+            </td>
+          </tr>
+          <tr>
+            <td><code>main_gui.c</code><br><code>main_cli.c</code><br><code>test_stand.c</code></td>
+            <td>Прикладной уровень (Win32 GUI, интерактивный CLI и модульные автотесты)</td>
+            <td>
+              Графическое рабочее место оператора (<code>stand_gui.exe</code>), защищённая командная оболочка (<code>stand_cli.exe</code>)
+              и набор автоматизированных интеграционных проверок (<code>test_stand.exe</code>).
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Структура контекста устройства <code>E502_StandDevice</code></h3>
+      <p>
+        Все пользовательские функции модуля <code>e502_ctrl.h</code> принимают указатель на структуру состояния <code>E502_StandDevice</code>.
+        Прямая модификация полей структуры запрещена — изменение конфигурации выполняется исключительно через функции API, которые автоматически
+        выставляют флаг рассинхронизации с ПЛИС <code>config_dirty = true</code>.
+      </p>
+      <pre><code>typedef struct {
+    uint32_t         init_magic;                     /* Маркер инициализации E502_STAND_MAGIC (0x45353032U) */
+    t_x502_hnd       hnd;                            /* Дескриптор открытого модуля из библиотеки x502api   */
+    bool             is_connected;                   /* Признак активного соединения USB или Ethernet       */
+    bool             config_dirty;                   /* true, если настройки изменены, но не записаны в ПЛИС*/
+    t_x502_info      dev_info;                       /* Серийный номер, версия ПЛИС, ревизия платы          */
+    uint32_t         lch_count;                      /* Активное число логических каналов (1..32)           */
+    E502_ChannelCfg  lch_cfg[STAND_MAX_CHANNELS];    /* Локальная таблица настроек 32 логических каналов    */
+    uint32_t         pullups_mask;                   /* Битовая маска резисторов подтяжки DI (0x00..0x3F)   */
+    int32_t          last_error;                     /* Код последней ошибки драйвера (X502_ERR_*)          */
+} E502_StandDevice;</code></pre>
+
+      <div class="chapter-nav-footer">
+        <span></span>
+        <a href="#chap-2" class="chap-step-btn">Далее: Глава 2. Графический интерфейс (UI и фото) &raquo;</a>
+      </div>
+    </section>
+
+    <!-- ==================== ГЛАВА 2 ==================== -->
+    <section id="chap-2" class="chapter-section">
+      <h2>Глава 2. Описание функциональности графического интерфейса (UI, окна и кнопки)</h2>
+      <p>
+        Графическая оболочка <code>stand_gui.exe</code> построена по строгому приборному принципу: левая колонка содержит четыре
+        функциональных блока управления в порядке технологического маршрута настройки модуля, а правая часть отведена под цифровой осциллограф
+        реального времени и сводную измерительную таблицу.
+      </p>
+
+      <div id="ui-full" class="screenshot-card">
+        <img src="docs_assets/ui_full_window.png" alt="Главное окно стенда L-Card E-502 в процессе многоканального опроса АЦП">
+        <div class="screenshot-caption">
+          Рис. 2.1. Общий вид главного окна <code>stand_gui.exe</code> при одновременном опросе 6 логических каналов АЦП (20 Гц)
+        </div>
+      </div>
+
+      <h3 id="ui-explorer">Интерактивный разбор панелей, кнопок и полей ввода</h3>
+      <p>Выберите интересующий функциональный блок ниже, чтобы увидеть его увеличенный снимок и таблицу назначения каждой кнопки:</p>
+
+      <div class="ui-tabs" role="tablist">
+        <button class="ui-tab-btn active" onclick="showUiTab('tab-block1', this)">Блок 1. Подключение и статус</button>
+        <button class="ui-tab-btn" onclick="showUiTab('tab-block2', this)">Блок 2. Логическая таблица АЦП и ПЛИС</button>
+        <button class="ui-tab-btn" onclick="showUiTab('tab-block3', this)">Блок 3. Аналоговые выходы ЦАП</button>
+        <button class="ui-tab-btn" onclick="showUiTab('tab-block4', this)">Блок 4. Генератор сигналов (Имитатор)</button>
+        <button class="ui-tab-btn" onclick="showUiTab('tab-block5', this)">Правая панель: Осциллограф и таблица</button>
+        <button class="ui-tab-btn" onclick="showUiTab('tab-topbar', this)">Верхняя панель и окно справки</button>
+      </div>
+
+      <!-- Вкладка Блок 1 -->
+      <div id="tab-block1" class="ui-panel active">
+        <div class="ui-panel-grid">
+          <div class="screenshot-card" style="margin:0;">
+            <img src="docs_assets/ui_block1_conn.png" alt="Блок 1. Подключение и статус модуля">
+            <div class="screenshot-caption">Рис. 2.2. Блок 1 — Управление соединением</div>
+          </div>
+          <div>
+            <h4>Назначение элементов Блока 1 («1. Подключение и статус модуля»)</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Элемент управления</th>
+                  <th>Вызываемая функция C API</th>
+                  <th>Выполняемое действие</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Кнопка <strong>[Поиск USB]</strong></td>
+                  <td><a href="#fn-E502_StandListUSB"><code>E502_StandListUSB()</code></a></td>
+                  <td>Опрашивает шину USB через <code>E502_UsbGetSerialList</code> и заполняет выпадающий список серийных номеров подключённых модулей.</td>
+                </tr>
+                <tr>
+                  <td>Поле <strong>[Серийный номер]</strong></td>
+                  <td>Аргумент <code>serial</code></td>
+                  <td>Позволяет выбрать обнаруженный серийный номер (например, <code>E502-SIM-0001</code>) или ввести его вручную.</td>
+                </tr>
+                <tr>
+                  <td>Кнопка <strong>[Подкл. USB]</strong></td>
+                  <td><a href="#fn-E502_StandConnectUSB"><code>E502_StandConnectUSB()</code></a></td>
+                  <td>Открывает связь с модулем по USB, сбрасывает историю осциллографа, включает 6 каналов по умолчанию и записывает начальную конфигурацию в ПЛИС.</td>
+                </tr>
+                <tr>
+                  <td>Кнопка <strong>[Подкл. IP (Sim)]</strong></td>
+                  <td><a href="#fn-E502_StandConnectIP"><code>E502_StandConnectIP()</code></a></td>
+                  <td>Устанавливает TCP/IP-соединение с модулем по адресу <code>192.168.1.100</code> (таймаут <code>1000 мс</code>).</td>
+                </tr>
+                <tr>
+                  <td>Кнопка <strong>[Отключить]</strong></td>
+                  <td><a href="#fn-E502_StandDisconnect"><code>E502_StandDisconnect()</code></a></td>
+                  <td>Останавливает таймер опроса АЦП, закрывает соединение <code>X502_Close</code> и освобождает дескриптор <code>X502_Free</code>.</td>
+                </tr>
+                <tr>
+                  <td>Кнопка <strong>[Тест LED1]</strong></td>
+                  <td><a href="#fn-E502_StandBlinkLed"><code>E502_StandBlinkLed()</code></a></td>
+                  <td>Посылает команду включения/выключения светодиода на корпусе прибора и подсвечивает индикатор <code>LED1</code> в правом верхнем углу осциллографа.</td>
+                </tr>
+                <tr>
+                  <td>Индикаторы <strong>СТАТУС / Модель</strong></td>
+                  <td>Поля <code>g_dev.is_connected</code>, <code>g_dev.config_dirty</code>, <code>g_dev.dev_info</code></td>
+                  <td>Отображают состояние связи, статус регистров ПЛИС (<code>СИНХРОН.</code> или <code>ИЗМЕНЕНО</code>), версию прошивки ПЛИС и ревизию платы.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладка Блок 2 -->
+      <div id="tab-block2" class="ui-panel">
+        <div class="ui-panel-grid">
+          <div class="screenshot-card" style="margin:0;">
+            <img src="docs_assets/ui_block2_lch.png" alt="Блок 2. Логическая таблица АЦП и подтяжка">
+            <div class="screenshot-caption">Рис. 2.3. Блок 2 — Настройка каналов и ПЛИС</div>
+          </div>
+          <div>
+            <h4>Назначение элементов Блока 2 («2. Логическая таблица АЦП и подтяжка»)</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Элемент управления</th>
+                  <th>Вызываемая функция C API</th>
+                  <th>Выполняемое действие</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Поле <strong>[Активных каналов]</strong> + кнопка <strong>[Задать число]</strong></td>
+                  <td><a href="#fn-E502_StandSetChannelCount"><code>E502_StandSetChannelCount()</code></a></td>
+                  <td>Устанавливает длину опрашиваемой таблицы АЦП (допустимо от <code>1</code> до <code>32</code>). Выставляет флаг <code>config_dirty = true</code>.</td>
+                </tr>
+                <tr>
+                  <td>Список <strong>[Канал: LCH 0..31]</strong></td>
+                  <td>Выбор индекса <code>lch</code></td>
+                  <td>При переключении автоматически подгружает текущие настройки выбранного слота (<code>phy_ch</code>, <code>mode</code>, <code>range</code>, <code>avg</code>) в поля редактирования.</td>
+                </tr>
+                <tr>
+                  <td>Поля <strong>[Физ.вх]</strong>, <strong>[Уср]</strong>, списки <strong>[Режим]</strong>, <strong>[Диапаз.]</strong> + кнопка <strong>[Применить настройки к каналу LCH]</strong></td>
+                  <td><a href="#fn-E502_StandConfigChannel"><code>E502_StandConfigChannel()</code></a></td>
+                  <td>Проверяет корректность комбинации параметров (включая ограничение <code>phy_ch &lt; 16</code> для режима <code>DIFF</code> и <code>avg &le; 128</code>) и сохраняет их в теневую структуру <code>lch_cfg[lch]</code>.</td>
+                </tr>
+                <tr>
+                  <td>Поле <strong>[Подтяжка Hex]</strong> + кнопка <strong>[Задать маску]</strong></td>
+                  <td><a href="#fn-E502_StandSetPullups"><code>E502_StandSetPullups()</code></a></td>
+                  <td>Задаёт шестнадцатеричную маску резисторов подтяжки цифровых линий и синхровходов (от <code>0x00</code> до <code>0x3F</code>).</td>
+                </tr>
+                <tr>
+                  <td>Кнопка <strong>[Записать конфигурацию в ПЛИС (Apply)]</strong></td>
+                  <td><a href="#fn-E502_StandApplyConfig"><code>E502_StandApplyConfig()</code></a></td>
+                  <td>Выполняет полную транзакцию записи всех настроек в регистры ПЛИС (<code>X502_Configure</code>) и переводит статус в <code>СИНХРОН.</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладка Блок 3 -->
+      <div id="tab-block3" class="ui-panel">
+        <div class="ui-panel-grid">
+          <div class="screenshot-card" style="margin:0;">
+            <img src="docs_assets/ui_block3_dac.png" alt="Блок 3. Аналоговые выходы ЦАП">
+            <div class="screenshot-caption">Рис. 2.4. Блок 3 — Двухканальный ЦАП</div>
+          </div>
+          <div>
+            <h4>Назначение элементов Блока 3 («3. Аналоговые выходы ЦАП (-5.0 .. +5.0 В)»)</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Элемент управления</th>
+                  <th>Вызываемая функция C API</th>
+                  <th>Выполняемое действие</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Поле <strong>[ЦАП1 (В)]</strong> + кнопка <strong>[Выдать на ЦАП1]</strong></td>
+                  <td><a href="#fn-E502_StandWriteDac"><code>E502_StandWriteDac(dev, X502_DAC_CH1, v)</code></a></td>
+                  <td>Проверяет конечность числа и диапазон <code>[-5.0; +5.0] В</code>, после чего немедленно выставляет постоянное напряжение на 1-м канале ЦАП через <code>X502_AsyncOutDac</code>.</td>
+                </tr>
+                <tr>
+                  <td>Поле <strong>[ЦАП2 (В)]</strong> + кнопка <strong>[Выдать на ЦАП2]</strong></td>
+                  <td><a href="#fn-E502_StandWriteDac"><code>E502_StandWriteDac(dev, X502_DAC_CH2, v)</code></a></td>
+                  <td>Немедленно выставляет напряжение на 2-м канале ЦАП. В режиме имитации выходы ЦАП1 и ЦАП2 заведены петлёй обратной связи на физические входы <code>Phy 4</code> и <code>Phy 5</code>.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладка Блок 4 -->
+      <div id="tab-block4" class="ui-panel">
+        <div class="ui-panel-grid">
+          <div class="screenshot-card" style="margin:0;">
+            <img src="docs_assets/ui_block4_sim.png" alt="Блок 4. Генератор тестовых сигналов">
+            <div class="screenshot-caption">Рис. 2.5. Блок 4 — Генератор искусственных сигналов</div>
+          </div>
+          <div>
+            <h4>Назначение элементов Блока 4 («4. Генератор тестовых сигналов (Имитатор)»)</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Элемент управления</th>
+                  <th>Вызываемая функция C API</th>
+                  <th>Выполняемое действие</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Список <strong>[Физ.вх: Phy 0..31]</strong></td>
+                  <td><a href="#fn-E502_SimGetPhySignal"><code>E502_SimGetPhySignal()</code></a></td>
+                  <td>Выбирает физический вход имитатора и отображает его текущие параметры (форму волны, амплитуду, частоту, постоянное смещение и СКО шума).</td>
+                </tr>
+                <tr>
+                  <td>Список <strong>[Форма]</strong> + поля <strong>[Ампл]</strong>, <strong>[Част]</strong>, <strong>[Смещ]</strong>, <strong>[Шум]</strong></td>
+                  <td>Параметры генератора</td>
+                  <td>Позволяют задать один из 7 законов сигнала: Синусоида, Меандр, Треугольник, Пила, Постоянное напряжение (DC), Петля с ЦАП1 или Петля с ЦАП2.</td>
+                </tr>
+                <tr>
+                  <td>Кнопка <strong>[Обновить сигнал на физическом входе]</strong></td>
+                  <td><a href="#fn-E502_SimSetPhySignal"><code>E502_SimSetPhySignal()</code></a></td>
+                  <td>Применяет новые параметры синтетического сигнала к выбранному физическому входу в реальном времени без остановки опроса АЦП.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладка Правая панель -->
+      <div id="tab-block5" class="ui-panel">
+        <div class="ui-panel-grid wide-img">
+          <div class="screenshot-card" style="margin:0;">
+            <img src="docs_assets/ui_scope_table.png" alt="Правая панель: Цифровой осциллограф и сводная таблица каналов">
+            <div class="screenshot-caption">Рис. 2.6. Правая панель — Цифровой осциллограф (до 8 лучей) и таблица статистических параметров</div>
+          </div>
+          <div>
+            <h4>Назначение элементов правой панели управления сбором данных</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Элемент управления</th>
+                  <th>Вызываемая функция C API</th>
+                  <th>Выполняемое действие</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Кнопка <strong>[Старт опроса (20 Гц)] / [Стоп опроса]</strong></td>
+                  <td>Циклический вызов <a href="#fn-E502_StandReadAdcFrame"><code>E502_StandReadAdcFrame()</code></a> по таймеру <code>50 мс</code></td>
+                  <td>Запускает или останавливает непрерывное чтение кадров АЦП с обновлением осциллограммы и расчётом статистики по буферу из 220 отсчётов.</td>
+                </tr>
+                <tr>
+                  <td>Кнопка <strong>[Одиночный кадр]</strong></td>
+                  <td>Однократный вызов <a href="#fn-E502_StandReadAdcFrame"><code>E502_StandReadAdcFrame()</code></a></td>
+                  <td>Выполняет захват ровно одного синхронного кадра по всем активным логическим каналам (пошаговый режим отладки).</td>
+                </tr>
+                <tr>
+                  <td>Кнопка <strong>[Очистить экран]</strong></td>
+                  <td><code>clear_scope_history()</code></td>
+                  <td>Обнуляет кольцевой буфер осциллографа и сбрасывает накопленные значения <code>МИН</code>, <code>МАКС</code> и <code>СКЗ Vrms</code>.</td>
+                </tr>
+                <tr>
+                  <td>Таблица <strong>LCH | ВХ. | РЕЖ. | ДИАПАЗ. | УСР | ТЕКУЩЕЕ | МИН | МАКС | СКЗ Vrms</strong></td>
+                  <td>Агрегация по буферу <code>g_trace_buf</code></td>
+                  <td>Отображает для каждого активного логического канала мгновенное напряжение, экстремумы и среднеквадратическое значение $V_{\text{rms}} = \sqrt{\frac{1}{N}\sum_{k=1}^{N} u_k^2}$.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладка Верхняя панель и окно справки -->
+      <div id="tab-topbar" class="ui-panel">
+        <div class="screenshot-card" style="margin-top:0;">
+          <img src="docs_assets/ui_topbar.png" alt="Верхняя панель инструментов главного окна">
+          <div class="screenshot-caption">Рис. 2.7. Верхняя панель инструментов главного окна</div>
+        </div>
+        <div class="ui-panel-grid wide-img">
+          <div class="screenshot-card" style="margin:0;">
+            <img src="docs_assets/ui_help_window.png" alt="Встроенное интерактивное справочное окно">
+            <div class="screenshot-caption">Рис. 2.8. Встроенное интерактивное справочное окно с оглавлением глав и функций</div>
+          </div>
+          <div class="screenshot-card" style="margin:0;">
+            <img src="docs_assets/ui_help_func.png" alt="Просмотр описания конкретной функции во встроенном окне справки">
+            <div class="screenshot-caption">Рис. 2.9. Отображение карточки функции и её аргументов во встроенном справочнике приложения</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter-nav-footer">
+        <a href="#chap-1" class="chap-step-btn">&laquo; Назад: Глава 1. Архитектура стенда</a>
+        <a href="#chap-3" class="chap-step-btn">Далее: Глава 3. Интерактивный справочник функций &raquo;</a>
+      </div>
+    </section>
+
+    <!-- ==================== ГЛАВА 3 ==================== -->
+    <section id="chap-3" class="chapter-section">
+      <h2>Глава 3. Интерактивный справочник пользовательских функций (полное описание аргументов)</h2>
+      <p>
+        Ниже приведено исчерпывающее описание всех <strong>20 пользовательских функций</strong> программного комплекса:
+        13 функций основного модуля управления стендом (<code>e502_ctrl.h</code>) и 7 функций модуля имитации и тестирования (<code>e502_sim.h</code>).
+        Используйте строку поиска или кнопки фильтрации для быстрого отбора функций, а также нажимайте на заголовок любой карточки для сворачивания/разворачивания.
+      </p>
+
+      <!-- Панель поиска и фильтрации функций -->
+      <div class="func-toolbar">
+        <input type="text" id="funcSearchInput" class="func-search" placeholder="Поиск по имени функции, аргументу или коду ошибки (например: phy_ch, DAC, pullup)..." oninput="filterFunctions()">
+        <button class="func-filter-btn active" onclick="setFuncCategory('all', this)">Все функции (20)</button>
+        <button class="func-filter-btn" onclick="setFuncCategory('ctrl', this)">Управление стендом e502_ctrl.h (13)</button>
+        <button class="func-filter-btn" onclick="setFuncCategory('sim', this)">Имитатор сигналов e502_sim.h (7)</button>
+        <button class="func-filter-btn" onclick="toggleAllFuncCards(false)">Развернуть все</button>
+        <button class="func-filter-btn" onclick="toggleAllFuncCards(true)">Свернуть все</button>
+      </div>
+
+      <!-- 1. E502_StandInitStruct -->
+      <article id="fn-E502_StandInitStruct" class="func-card" data-cat="ctrl">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">1. void E502_StandInitStruct(E502_StandDevice *dev)</span>
+          <span class="badge badge-hdr">e502_ctrl.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Выполняет начальную безопасную инициализацию структуры контекста устройства <code>E502_StandDevice</code>. Если переданная структура уже была инициализирована ранее (поле <code>init_magic == E502_STAND_MAGIC</code>) и содержит активный дескриптор <code>hnd != NULL</code>, функция автоматически вызывает <code>E502_StandDisconnect(dev)</code> для предотвращения утечки дескриптора перед обнулением памяти.</p>
+          <pre><code>void E502_StandInitStruct(E502_StandDevice *dev);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dev</code></td>
+                <td><code>E502_StandDevice *</code></td>
+                <td><span class="badge badge-inout">[in/out]</span></td>
+                <td>Ненулевой указатель (при <code>NULL</code> функция безопасно завершается без действий)</td>
+                <td>Указатель на пользовательскую структуру состояния стенда. После вызова заполняется настройками по умолчанию: <code>lch_count = 4</code>, каналы <code>0..31</code> переводятся в режим <code>COMM</code> на диапазон <code>±10 В</code>, маска подтяжки <code>pullups_mask = 0x04</code> (DI_SYN1), <code>config_dirty = true</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Возвращаемое значение:</strong> Отсутствует (<code>void</code>). Поле <code>dev->last_error</code> устанавливается в <code>X502_ERR_OK (0)</code>.</p>
+        </div>
+      </article>
+
+      <!-- 2. E502_StandListUSB -->
+      <article id="fn-E502_StandListUSB" class="func-card" data-cat="ctrl">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">2. int E502_StandListUSB(char serials[][X502_SERIAL_SIZE], uint32_t max_count, uint32_t *found_count)</span>
+          <span class="badge badge-hdr">e502_ctrl.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Сканирует шину USB и запрашивает у драйвера список серийных номеров всех доступных к открытию модулей L-Card E-502.</p>
+          <pre><code>int E502_StandListUSB(char serials[][X502_SERIAL_SIZE], uint32_t max_count, uint32_t *found_count);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>serials</code></td>
+                <td><code>char [][32]</code></td>
+                <td><span class="badge badge-out">[out]</span></td>
+                <td>Массив минимум из <code>max_count</code> строк по <code>X502_SERIAL_SIZE (32)</code> байт (не <code>NULL</code>)</td>
+                <td>Выходной двумерный символьный буфер, в который записываются нуль-терминированные строки серийных номеров обнаруженных модулей.</td>
+              </tr>
+              <tr>
+                <td><code>max_count</code></td>
+                <td><code>uint32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td><code>&ge; 1</code> (при <code>0</code> функция сразу возвращает <code>X502_ERR_OK</code>)</td>
+                <td>Максимальное число серийных номеров, которое может вместить массив <code>serials</code>.</td>
+              </tr>
+              <tr>
+                <td><code>found_count</code></td>
+                <td><code>uint32_t *</code></td>
+                <td><span class="badge badge-out">[out]</span></td>
+                <td>Указатель на <code>uint32_t</code> или <code>NULL</code></td>
+                <td>Если указатель не равен <code>NULL</code>, в него записывается общее число найденных на шине USB модулей E-502.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Возвращаемое значение:</strong> <code>X502_ERR_OK (0)</code> при успешном опросе шины; <code>X502_ERR_INVALID_PARAMETER (-9)</code> если <code>serials == NULL</code> при <code>max_count &gt; 0</code>; отрицательный код ошибки при сбое USB-драйвера. Внутренний вызов: <code>E502_UsbGetSerialList()</code>.</p>
+        </div>
+      </article>
+
+      <!-- 3. E502_StandConnectUSB -->
+      <article id="fn-E502_StandConnectUSB" class="func-card" data-cat="ctrl">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">3. int E502_StandConnectUSB(E502_StandDevice *dev, const char *serial)</span>
+          <span class="badge badge-hdr">e502_ctrl.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Создаёт дескриптор <code>t_x502_hnd</code>, открывает соединение с модулем E-502 по интерфейсу USB 2.0 и считывает паспортную информацию об устройстве (модель, серийный номер, версию ПЛИС, ревизию платы).</p>
+          <pre><code>int E502_StandConnectUSB(E502_StandDevice *dev, const char *serial);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dev</code></td>
+                <td><code>E502_StandDevice *</code></td>
+                <td><span class="badge badge-inout">[in/out]</span></td>
+                <td>Ненулевой указатель на структуру устройства</td>
+                <td>Контекст устройства. Если до вызова уже существовало открытое соединение, функция автоматически закрывает его через <code>E502_StandDisconnect(dev)</code>.</td>
+              </tr>
+              <tr>
+                <td><code>serial</code></td>
+                <td><code>const char *</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td>Строка серийного номера, <code>""</code> (пустая строка) или <code>NULL</code></td>
+                <td>Серийный номер целевого прибора. Если передан <code>NULL</code> или пустая строка <code>""</code>, функция автоматически вызывает <code>E502_UsbGetSerialList</code> и подключается к первому найденному на шине USB модулю.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Возвращаемое значение:</strong> <code>X502_ERR_OK (0)</code> — успешное подключение; <code>X502_ERR_DEVICE_NOT_FOUND (-3)</code> — ни один модуль USB не обнаружен; <code>X502_ERR_MEMORY_ALLOC (-2)</code> — ошибка выделения дескриптора <code>X502_Create()</code>. При частичном сбое дескриптор гарантированно освобождается. Внутренние вызовы: <code>X502_Create()</code>, <code>E502_OpenUsb()</code>, <code>X502_GetDevInfo()</code>.</p>
+        </div>
+      </article>
+
+      <!-- 4. E502_StandConnectIP -->
+      <article id="fn-E502_StandConnectIP" class="func-card" data-cat="ctrl">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">4. int E502_StandConnectIP(E502_StandDevice *dev, uint32_t ip_addr, uint32_t timeout_ms)</span>
+          <span class="badge badge-hdr">e502_ctrl.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Создаёт дескриптор <code>t_x502_hnd</code> и устанавливает сетевое соединение с модулем E-502 по интерфейсу Ethernet (TCP/IP) с заданным IPv4-адресом и временем ожидания ответа.</p>
+          <pre><code>int E502_StandConnectIP(E502_StandDevice *dev, uint32_t ip_addr, uint32_t timeout_ms);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dev</code></td>
+                <td><code>E502_StandDevice *</code></td>
+                <td><span class="badge badge-inout">[in/out]</span></td>
+                <td>Ненулевой указатель на структуру устройства</td>
+                <td>Контекст устройства. При наличии старого подключения оно предварительно закрывается.</td>
+              </tr>
+              <tr>
+                <td><code>ip_addr</code></td>
+                <td><code>uint32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td>32-битный IPv4-адрес в хост-порядке байт (не <code>0</code>)</td>
+                <td>Сетевой адрес прибора: старший байт — первый октет. Например, для <code>192.168.1.100</code> значение формируется как <code>(192U&lt;&lt;24)|(168U&lt;&lt;16)|(1U&lt;&lt;8)|100U = 0xC0A80164</code>.</td>
+              </tr>
+              <tr>
+                <td><code>timeout_ms</code></td>
+                <td><code>uint32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td>Рекомендуется <code>500 .. 5000</code> мс</td>
+                <td>Максимальное время ожидания установки TCP-соединения в миллисекундах.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Возвращаемое значение:</strong> <code>X502_ERR_OK (0)</code> — успешное подключение; <code>X502_ERR_INVALID_PARAMETER (-9)</code> — если <code>dev == NULL</code>; отрицательный код ошибки при недоступности узла. Внутренние вызовы: <code>X502_Create()</code>, <code>E502_OpenByIpAddr()</code>, <code>X502_GetDevInfo()</code>.</p>
+        </div>
+      </article>
+
+      <!-- 5. E502_StandDisconnect -->
+      <article id="fn-E502_StandDisconnect" class="func-card" data-cat="ctrl">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">5. int E502_StandDisconnect(E502_StandDevice *dev)</span>
+          <span class="badge badge-hdr">e502_ctrl.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Корректно закрывает канал связи с модулем E-502, освобождает системный дескриптор <code>t_x502_hnd</code> и сбрасывает флаг <code>is_connected = false</code>. Функция идемпотентна — повторный вызов для уже отключённого устройства безопасен.</p>
+          <pre><code>int E502_StandDisconnect(E502_StandDevice *dev);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dev</code></td>
+                <td><code>E502_StandDevice *</code></td>
+                <td><span class="badge badge-inout">[in/out]</span></td>
+                <td>Ненулевой указатель на структуру устройства</td>
+                <td>Контекст устройства. После вызова <code>dev->hnd = NULL</code>, <code>dev->is_connected = false</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Возвращаемое значение:</strong> <code>X502_ERR_OK (0)</code> при успешном освобождении ресурсов; <code>X502_ERR_INVALID_PARAMETER (-9)</code> при <code>dev == NULL</code>. Внутренние вызовы: <code>X502_Close()</code>, <code>X502_Free()</code>.</p>
+        </div>
+      </article>
+
+      <!-- 6. E502_StandSetChannelCount -->
+      <article id="fn-E502_StandSetChannelCount" class="func-card" data-cat="ctrl">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">6. int E502_StandSetChannelCount(E502_StandDevice *dev, uint32_t count)</span>
+          <span class="badge badge-hdr">e502_ctrl.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Задаёт количество активных логических каналов в таблице опроса АЦП и помечает конфигурацию как требующую синхронизации с ПЛИС (<code>config_dirty = true</code>).</p>
+          <pre><code>int E502_StandSetChannelCount(E502_StandDevice *dev, uint32_t count);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dev</code></td>
+                <td><code>E502_StandDevice *</code></td>
+                <td><span class="badge badge-inout">[in/out]</span></td>
+                <td>Ненулевой указатель на структуру устройства</td>
+                <td>Контекст устройства, в котором обновляется поле <code>lch_count</code>.</td>
+              </tr>
+              <tr>
+                <td><code>count</code></td>
+                <td><code>uint32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td><code>1 &le; count &le; 32</code> (<code>STAND_MAX_CHANNELS</code>)</td>
+                <td>Количество опрашиваемых за один кадр логических каналов АЦП. Значения <code>0</code> или <code>&gt; 32</code> отклоняются без изменения состояния.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Возвращаемое значение:</strong> <code>X502_ERR_OK (0)</code> — число каналов принято; <code>X502_ERR_INVALID_LCH_COUNT (-102)</code> — если <code>count == 0</code> или <code>count &gt; 32</code>.</p>
+        </div>
+      </article>
+
+      <!-- 7. E502_StandConfigChannel -->
+      <article id="fn-E502_StandConfigChannel" class="func-card" data-cat="ctrl">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">7. int E502_StandConfigChannel(E502_StandDevice *dev, uint32_t lch, uint32_t phy_ch, uint32_t mode, uint32_t range, uint32_t avg)</span>
+          <span class="badge badge-hdr">e502_ctrl.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Выполняет полную валидацию параметров и настраивает один слот логической таблицы АЦП <code>dev->lch_cfg[lch]</code>. Устанавливает <code>dev->config_dirty = true</code>.</p>
+          <pre><code>int E502_StandConfigChannel(E502_StandDevice *dev, uint32_t lch,
+                            uint32_t phy_ch, uint32_t mode,
+                            uint32_t range, uint32_t avg);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dev</code></td>
+                <td><code>E502_StandDevice *</code></td>
+                <td><span class="badge badge-inout">[in/out]</span></td>
+                <td>Ненулевой указатель</td>
+                <td>Контекст устройства.</td>
+              </tr>
+              <tr>
+                <td><code>lch</code></td>
+                <td><code>uint32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td><code>0 &le; lch &lt; dev-&gt;lch_count</code> (и <code>&lt; 32</code>)</td>
+                <td>Индекс настраиваемого логического канала (слота таблицы опроса).</td>
+              </tr>
+              <tr>
+                <td><code>phy_ch</code></td>
+                <td><code>uint32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td>Для <code>COMM</code>: <code>0..31</code>;<br>для <code>DIFF</code>: <code>0..15</code>;<br>для <code>ZERO</code>: игнорируется (<code>0</code>)</td>
+                <td>Номер физического аналогового входа на разъёме модуля. В дифференциальном режиме измеряется разность между входом <code>phy_ch</code> и входом <code>phy_ch + 16</code>.</td>
+              </tr>
+              <tr>
+                <td><code>mode</code></td>
+                <td><code>uint32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td><code>0</code> (<code>X502_LCH_MODE_COMM</code>),<br><code>1</code> (<code>X502_LCH_MODE_DIFF</code>),<br><code>2</code> (<code>X502_LCH_MODE_ZERO</code>)</td>
+                <td>Режим коммутации аналогового мультиплексора АЦП: с общей землёй (<code>COMM</code>), дифференциальный (<code>DIFF</code>) или измерение собственного нуля (<code>ZERO</code>).</td>
+              </tr>
+              <tr>
+                <td><code>range</code></td>
+                <td><code>uint32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td><code>0</code> (<code>±10 В</code>), <code>1</code> (<code>±5 В</code>),<br><code>2</code> (<code>±2 В</code>), <code>3</code> (<code>±1 В</code>),<br><code>4</code> (<code>±0.5 В</code>), <code>5</code> (<code>±0.2 В</code>)</td>
+                <td>Код коэффициента усиления входного программируемого усилителя (PGA) из перечисления <code>t_x502_adc_range</code>.</td>
+              </tr>
+              <tr>
+                <td><code>avg</code></td>
+                <td><code>uint32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td><code>0</code> (по умолчанию = 1) или <code>1 .. 128</code></td>
+                <td>Коэффициент аппаратного усреднения отсчётов в ПЛИС. Снижает СКО случайного шума в $\sqrt{\text{avg}}$ раз.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Возвращаемое значение:</strong>
+            <code>X502_ERR_OK (0)</code> — успешно;
+            <code>X502_ERR_INVALID_LCH_NUMBER (-103)</code> — выход индекса <code>lch</code> за пределы <code>lch_count</code>;
+            <code>X502_ERR_INVALID_LCH_MODE (-105)</code> — неизвестный код режима;
+            <code>X502_ERR_INVALID_LCH_PHY_NUMBER (-106)</code> — <code>phy_ch &ge; 16</code> в режиме DIFF или <code>&ge; 32</code> в режиме COMM;
+            <code>X502_ERR_INVALID_LCH_RANGE (-104)</code> — код диапазона вне <code>0..5</code>;
+            <code>X502_ERR_INVALID_LCH_AVG_SIZE (-107)</code> — <code>avg &gt; 128</code>.
+          </p>
+        </div>
+      </article>
+
+      <!-- 8. E502_StandSetPullups -->
+      <article id="fn-E502_StandSetPullups" class="func-card" data-cat="ctrl">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">8. int E502_StandSetPullups(E502_StandDevice *dev, uint32_t pullups_mask)</span>
+          <span class="badge badge-hdr">e502_ctrl.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Задаёт битовую маску включения нагрузочных резисторов подтяжки (pull-up / pull-down) цифровых входов и линий синхронизации. Помечает конфигурацию флагом <code>config_dirty = true</code>.</p>
+          <pre><code>int E502_StandSetPullups(E502_StandDevice *dev, uint32_t pullups_mask);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dev</code></td>
+                <td><code>E502_StandDevice *</code></td>
+                <td><span class="badge badge-inout">[in/out]</span></td>
+                <td>Ненулевой указатель</td>
+                <td>Контекст устройства.</td>
+              </tr>
+              <tr>
+                <td><code>pullups_mask</code></td>
+                <td><code>uint32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td><code>0x00 .. 0x3F</code> (младшие 6 бит)</td>
+                <td>Побитовая комбинация флагов: <code>0x01</code> (DI_H: биты 8..15), <code>0x02</code> (DI_L: биты 0..7), <code>0x04</code> (DI_SYN1), <code>0x08</code> (DI_SYN2), <code>0x10</code> (притяжка DI0 к земле), <code>0x20</code> (притяжка DI1 к земле).</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Возвращаемое значение:</strong> <code>X502_ERR_OK (0)</code> — маска принята; <code>X502_ERR_INVALID_PARAMETER (-9)</code> — если установлены зарезервированные биты (<code>(pullups_mask &amp; ~0x3FU) != 0</code>).</p>
+        </div>
+      </article>
+
+      <!-- 9. E502_StandApplyConfig -->
+      <article id="fn-E502_StandApplyConfig" class="func-card" data-cat="ctrl">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">9. int E502_StandApplyConfig(E502_StandDevice *dev)</span>
+          <span class="badge badge-hdr">e502_ctrl.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Выполняет полную транзакционную загрузку локальных настроек стенда в аппаратные регистры ПЛИС (FPGA) модуля E-502 строго в порядке, регламентированном руководством программиста L-Card.</p>
+          <pre><code>int E502_StandApplyConfig(E502_StandDevice *dev);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dev</code></td>
+                <td><code>E502_StandDevice *</code></td>
+                <td><span class="badge badge-inout">[in/out]</span></td>
+                <td>Указатель на открытое устройство (<code>is_connected == true</code>, <code>hnd != NULL</code>)</td>
+                <td>Контекст устройства. При успешном завершении транзакции сбрасывает <code>dev->config_dirty = false</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Последовательность внутренних вызовов SDK:</strong>
+            1) <code>X502_SetMode(hnd, X502_MODE_FPGA)</code> &rarr;
+            2) <code>X502_SetLChannelCount(hnd, lch_count)</code> &rarr;
+            3) цикл <code>X502_SetLChannel(hnd, i, phy_ch, mode, range, avg)</code> для <code>i = 0 .. lch_count - 1</code> &rarr;
+            4) <code>X502_SetDigInPullup(hnd, pullups_mask)</code> &rarr;
+            5) <code>X502_Configure(hnd, 0)</code>.
+          </p>
+          <p><strong>Возвращаемое значение:</strong> <code>X502_ERR_OK (0)</code> — ПЛИС успешно сконфигурирована; <code>X502_ERR_NOT_OPENED (-4)</code> — устройство не подключено; иначе код ошибки первого сбойного вызова SDK.</p>
+        </div>
+      </article>
+
+      <!-- 10. E502_StandReadAdcFrame -->
+      <article id="fn-E502_StandReadAdcFrame" class="func-card" data-cat="ctrl">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">10. int E502_StandReadAdcFrame(E502_StandDevice *dev, double *volts_buf, uint32_t timeout_ms)</span>
+          <span class="badge badge-hdr">e502_ctrl.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Считывает один полный синхронный кадр отсчётов АЦП по всем активным логическим каналам с применением заводских калибровочных коэффициентов и переводом в Вольты. Если перед чтением обнаружен флаг <code>dev->config_dirty == true</code>, функция автоматически вызывает <code>E502_StandApplyConfig(dev)</code>.</p>
+          <pre><code>int E502_StandReadAdcFrame(E502_StandDevice *dev, double *volts_buf, uint32_t timeout_ms);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dev</code></td>
+                <td><code>E502_StandDevice *</code></td>
+                <td><span class="badge badge-inout">[in/out]</span></td>
+                <td>Указатель на подключённое устройство</td>
+                <td>Контекст устройства.</td>
+              </tr>
+              <tr>
+                <td><code>volts_buf</code></td>
+                <td><code>double *</code></td>
+                <td><span class="badge badge-out">[out]</span></td>
+                <td>Массив размером не менее <code>dev-&gt;lch_count</code> элементов <code>double</code> (не <code>NULL</code>)</td>
+                <td>Выходной буфер, в который записываются измеренные напряжения в Вольтах для каналов <code>0 .. lch_count - 1</code>.</td>
+              </tr>
+              <tr>
+                <td><code>timeout_ms</code></td>
+                <td><code>uint32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td>Рекомендуется <code>100 .. 1000</code> мс</td>
+                <td>Таймаут ожидания готовности кадра АЦП в миллисекундах.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Возвращаемое значение:</strong> <code>X502_ERR_OK (0)</code> — кадр успешно считан; <code>X502_ERR_NOT_OPENED (-4)</code> — нет соединения; <code>X502_ERR_INVALID_PARAMETER (-9)</code> — если <code>volts_buf == NULL</code>. Внутренний вызов: <code>X502_AsyncGetAdcFrame(hnd, X502_PROC_FLAGS_VOLT, timeout_ms, volts_buf)</code>.</p>
+        </div>
+      </article>
+
+      <!-- 11. E502_StandWriteDac -->
+      <article id="fn-E502_StandWriteDac" class="func-card" data-cat="ctrl">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">11. int E502_StandWriteDac(E502_StandDevice *dev, uint32_t channel, double volts)</span>
+          <span class="badge badge-hdr">e502_ctrl.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Проверяет корректность номера канала и диапазона напряжения, после чего немедленно выполняет асинхронную выдачу постоянного напряжения на аналоговый выход ЦАП1 или ЦАП2.</p>
+          <pre><code>int E502_StandWriteDac(E502_StandDevice *dev, uint32_t channel, double volts);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dev</code></td>
+                <td><code>E502_StandDevice *</code></td>
+                <td><span class="badge badge-inout">[in/out]</span></td>
+                <td>Указатель на подключённое устройство</td>
+                <td>Контекст устройства.</td>
+              </tr>
+              <tr>
+                <td><code>channel</code></td>
+                <td><code>uint32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td><code>0</code> (<code>X502_DAC_CH1</code>) или <code>1</code> (<code>X502_DAC_CH2</code>)</td>
+                <td>Номер выходного канала ЦАП.</td>
+              </tr>
+              <tr>
+                <td><code>volts</code></td>
+                <td><code>double</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td>Конечное вещественное число <code>-5.0 &le; volts &le; +5.0</code> В</td>
+                <td>Устанавливаемое выходное напряжение в Вольтах. Значения <code>NaN</code>, <code>±Inf</code>, а также значения за пределами <code>±5.000 В</code> блокируются до обращения к драйверу.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Возвращаемое значение:</strong> <code>X502_ERR_OK (0)</code> — напряжение выдано на выход; <code>X502_ERR_INVALID_DAC_CHANNEL (-109)</code> — неверный канал; <code>X502_ERR_INVALID_PARAMETER (-9)</code> — выход напряжения за пределы <code>[-5.0; +5.0] В</code>; <code>X502_ERR_NOT_OPENED (-4)</code> — прибор не открыт. Внутренний вызов: <code>X502_AsyncOutDac(hnd, channel, volts, X502_DAC_FLAGS_VOLT | X502_DAC_FLAGS_CALIBR)</code>.</p>
+        </div>
+      </article>
+
+      <!-- 12. E502_StandBlinkLed -->
+      <article id="fn-E502_StandBlinkLed" class="func-card" data-cat="ctrl">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">12. int E502_StandBlinkLed(E502_StandDevice *dev)</span>
+          <span class="badge badge-hdr">e502_ctrl.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Выполняет аппаратную визуальную идентификацию подключённого модуля путём переключения состояния светодиода <code>LED1</code> на лицевой панели прибора.</p>
+          <pre><code>int E502_StandBlinkLed(E502_StandDevice *dev);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dev</code></td>
+                <td><code>E502_StandDevice *</code></td>
+                <td><span class="badge badge-inout">[in/out]</span></td>
+                <td>Указатель на подключённое устройство</td>
+                <td>Контекст устройства.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Возвращаемое значение:</strong> <code>X502_ERR_OK (0)</code> — команда выполнена; <code>X502_ERR_NOT_OPENED (-4)</code> — устройство не открыто. Внутренний вызов: <code>X502_LedBlink(hnd)</code>.</p>
+        </div>
+      </article>
+
+      <!-- 13. E502_StandGetErrorStr -->
+      <article id="fn-E502_StandGetErrorStr" class="func-card" data-cat="ctrl">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">13. const char* E502_StandGetErrorStr(const E502_StandDevice *dev)</span>
+          <span class="badge badge-hdr">e502_ctrl.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Возвращает текстовую расшифровку последнего кода ошибки <code>dev->last_error</code>, возникшего при работе с данным контекстом устройства.</p>
+          <pre><code>const char* E502_StandGetErrorStr(const E502_StandDevice *dev);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dev</code></td>
+                <td><code>const E502_StandDevice *</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td>Указатель на структуру устройства (при <code>NULL</code> возвращает <code>"Invalid device pointer (NULL)"</code>)</td>
+                <td>Контекст устройства, из которого считывается поле <code>last_error</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Возвращаемое значение:</strong> Указатель на статическую нуль-терминированную строку с описанием кода ошибки (через <code>X502_GetErrorString(dev->last_error)</code>).</p>
+        </div>
+      </article>
+
+      <!-- 14. E502_SimReset -->
+      <article id="fn-E502_SimReset" class="func-card" data-cat="sim">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">14. void E502_SimReset(void)</span>
+          <span class="badge badge-hdr">e502_sim.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Полностью сбрасывает состояние имитатора к заводским настройкам по умолчанию, обнуляет модельные часы и счётчики вызовов, а также восстанавливает эталонные сигналы на физических входах (<code>Phy 0</code> — синус 50 Гц, <code>Phy 1</code> — меандр 25 Гц, <code>Phy 2</code> — треугольник 10 Гц, <code>Phy 3</code> — пила 20 Гц, <code>Phy 4</code> — петля ЦАП1, <code>Phy 5</code> — петля ЦАП2).</p>
+          <pre><code>void E502_SimReset(void);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>void</code></td>
+                <td>—</td>
+                <td>—</td>
+                <td>Аргументы не требуются</td>
+                <td>Функция вызывается без параметров перед началом новой серии испытаний.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- 15. E502_SimSetPhySignal -->
+      <article id="fn-E502_SimSetPhySignal" class="func-card" data-cat="sim">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">15. void E502_SimSetPhySignal(uint32_t phy_ch, E502_SimWaveType type, double amplitude_v, double freq_hz, double offset_v, double noise_v)</span>
+          <span class="badge badge-hdr">e502_sim.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Задаёт математический закон формирования входного сигнала и аддитивного белого шума на выбранном физическом входе имитатора <code>0..31</code>.</p>
+          <pre><code>void E502_SimSetPhySignal(uint32_t phy_ch, E502_SimWaveType type,
+                          double amplitude_v, double freq_hz,
+                          double offset_v, double noise_v);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>phy_ch</code></td>
+                <td><code>uint32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td><code>0 .. 31</code> (при <code>&ge; 32</code> вызов игнорируется)</td>
+                <td>Номер физического входа аналогового мультиплексора в имитаторе.</td>
+              </tr>
+              <tr>
+                <td><code>type</code></td>
+                <td><code>E502_SimWaveType</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td><code>SIM_WAVE_SINE (0)</code> .. <code>SIM_WAVE_DAC2_LOOP (6)</code></td>
+                <td>Форма синтезируемого сигнала: синусоида, меандр, треугольник, пила, постоянное напряжение (DC) или петля обратной связи с ЦАП1/ЦАП2.</td>
+              </tr>
+              <tr>
+                <td><code>amplitude_v</code></td>
+                <td><code>double</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td>Рекомендуется <code>0.0 .. 10.0</code> В</td>
+                <td>Амплитуда переменной составляющей сигнала в Вольтах.</td>
+              </tr>
+              <tr>
+                <td><code>freq_hz</code></td>
+                <td><code>double</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td><code>&ge; 0.0</code> Гц</td>
+                <td>Частота периодического сигнала в Герцах.</td>
+              </tr>
+              <tr>
+                <td><code>offset_v</code></td>
+                <td><code>double</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td><code>-10.0 .. +10.0</code> В</td>
+                <td>Постоянное смещение (DC-составляющая) сигнала в Вольтах.</td>
+              </tr>
+              <tr>
+                <td><code>noise_v</code></td>
+                <td><code>double</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td><code>&ge; 0.0</code> В</td>
+                <td>Амплитуда высокочастотной шумовой помехи в Вольтах, подавляемой в $\sqrt{\text{avg}}$ раз при включении усреднения в ПЛИС.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- 16. E502_SimGetPhySignal -->
+      <article id="fn-E502_SimGetPhySignal" class="func-card" data-cat="sim">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">16. void E502_SimGetPhySignal(uint32_t phy_ch, E502_SimSignalCfg *out_cfg)</span>
+          <span class="badge badge-hdr">e502_sim.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Считывает текущие настройки генератора искусственного сигнала для заданного физического входа <code>phy_ch</code>.</p>
+          <pre><code>void E502_SimGetPhySignal(uint32_t phy_ch, E502_SimSignalCfg *out_cfg);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание аргумента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>phy_ch</code></td>
+                <td><code>uint32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td><code>0 .. 31</code></td>
+                <td>Номер запрашиваемого физического входа.</td>
+              </tr>
+              <tr>
+                <td><code>out_cfg</code></td>
+                <td><code>E502_SimSignalCfg *</code></td>
+                <td><span class="badge badge-out">[out]</span></td>
+                <td>Ненулевой указатель на структуру <code>E502_SimSignalCfg</code></td>
+                <td>Структура, в которую копируются поля <code>type</code>, <code>amplitude_v</code>, <code>freq_hz</code>, <code>offset_v</code> и <code>noise_v</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- 17-18. E502_SimStepTime / E502_SimGetTime -->
+      <article id="fn-E502_SimStepTime" class="func-card" data-cat="sim">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">17–18. void E502_SimStepTime(double dt_sec) / double E502_SimGetTime(void)</span>
+          <span class="badge badge-hdr">e502_sim.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Управление внутренними модельными часами имитатора. При каждом чтении кадра АЦП время автоматически сдвигается на <code>2 мс</code>, однако функция <code>E502_SimStepTime</code> позволяет детерминированно смещать фазу сигналов в тестах.</p>
+          <pre><code>void   E502_SimStepTime(double dt_sec);
+double E502_SimGetTime(void);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Функция / Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dt_sec</code> (в <code>E502_SimStepTime</code>)</td>
+                <td><code>double</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td>Конечное число <code>&gt; 0.0</code> с</td>
+                <td>Приращение модельного времени в секундах. Отрицательные и нечисловые значения игнорируются.</td>
+              </tr>
+              <tr>
+                <td>Возврат <code>E502_SimGetTime()</code></td>
+                <td><code>double</code></td>
+                <td><span class="badge badge-out">[out]</span></td>
+                <td><code>&ge; 0.0</code> с</td>
+                <td>Возвращает текущее накопленное модельное время в секундах с момента последнего <code>E502_SimReset()</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- 19-20. E502_SimInjectFault / E502_SimGetStats -->
+      <article id="fn-E502_SimInjectFault" class="func-card" data-cat="sim">
+        <div class="func-card-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="func-card-title">19–20. void E502_SimInjectFault(int32_t err) / E502_SimStats E502_SimGetStats(void)</span>
+          <span class="badge badge-hdr">e502_sim.h</span>
+        </div>
+        <div class="func-card-body">
+          <p><strong>Назначение:</strong> Инструменты автоматизированного тестирования отказоустойчивости и контроля утечек памяти/дескрипторов.</p>
+          <pre><code>void          E502_SimInjectFault(int32_t err_code);
+E502_SimStats E502_SimGetStats(void);</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Функция / Аргумент</th>
+                <th>Тип</th>
+                <th>Направление</th>
+                <th>Допустимые значения</th>
+                <th>Описание</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>err_code</code> (в <code>E502_SimInjectFault</code>)</td>
+                <td><code>int32_t</code></td>
+                <td><span class="badge badge-in">[in]</span></td>
+                <td>Код <code>X502_ERR_*</code> (например, <code>-101</code>)</td>
+                <td>Принудительно заставляет следующий вызов <code>X502_Configure()</code> завершиться с указанным кодом ошибки, позволяя проверить очистку дескрипторов при частичном сбое инициализации.</td>
+              </tr>
+              <tr>
+                <td>Возврат <code>E502_SimGetStats()</code></td>
+                <td><code>E502_SimStats</code></td>
+                <td><span class="badge badge-out">[out]</span></td>
+                <td>Структура счётчиков</td>
+                <td>Возвращает число активных дескрипторов (<code>active_handles</code>), открытых соединений (<code>open_connections</code>), вызовов <code>X502_Configure</code>, чтений АЦП, записей ЦАП и миганий светодиода.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <div class="chapter-nav-footer">
+        <a href="#chap-2" class="chap-step-btn">&laquo; Назад: Глава 2. Графический интерфейс (UI и фото)</a>
+        <a href="#chap-4" class="chap-step-btn">Далее: Глава 4. Тренажёр вызовов API и ПЛИС &raquo;</a>
+      </div>
+    </section>
+
+    <!-- ==================== ГЛАВА 4 ==================== -->
+    <section id="chap-4" class="chapter-section">
+      <h2>Глава 4. Интерактивный тренажёр вызовов API и калькулятор тракта АЦП</h2>
+      <p>
+        Используйте приведённый ниже интерактивный тренажёр, чтобы проверить, как функции <code>E502_StandConfigChannel()</code> и
+        <code>E502_StandWriteDac()</code> валидируют переданные аргументы, какой код возврата <code>X502_ERR_*</code> формируется,
+        и как аппаратное усреднение в ПЛИС влияет на шаг квантования и среднеквадратическое отклонение шума.
+      </p>
+
+      <div class="sim-box">
+        <h3 style="margin-top:0;">Тренажёр проверки аргументов <code>E502_StandConfigChannel</code> и <code>E502_StandWriteDac</code></h3>
+        <div class="sim-grid">
+          <div class="sim-field">
+            <label for="simLchCount">Активных каналов (lch_count):</label>
+            <input type="number" id="simLchCount" value="6" min="0" max="40" oninput="updateApiSim()">
+          </div>
+          <div class="sim-field">
+            <label for="simLch">Логический канал (lch):</label>
+            <input type="number" id="simLch" value="0" min="0" max="40" oninput="updateApiSim()">
+          </div>
+          <div class="sim-field">
+            <label for="simMode">Режим входа (mode):</label>
+            <select id="simMode" onchange="updateApiSim()">
+              <option value="0">0: X502_LCH_MODE_COMM (Общая земля)</option>
+              <option value="1">1: X502_LCH_MODE_DIFF (Дифференц.)</option>
+              <option value="2">2: X502_LCH_MODE_ZERO (Калибровка 0)</option>
+            </select>
+          </div>
+          <div class="sim-field">
+            <label for="simPhy">Физический вход (phy_ch):</label>
+            <input type="number" id="simPhy" value="0" min="0" max="40" oninput="updateApiSim()">
+          </div>
+          <div class="sim-field">
+            <label for="simRange">Диапазон АЦП (range):</label>
+            <select id="simRange" onchange="updateApiSim()">
+              <option value="0">0: ±10 В (X502_ADC_RANGE_10)</option>
+              <option value="1">1: ±5 В (X502_ADC_RANGE_5)</option>
+              <option value="2">2: ±2 В (X502_ADC_RANGE_2)</option>
+              <option value="3">3: ±1 В (X502_ADC_RANGE_1)</option>
+              <option value="4">4: ±0.5 В (X502_ADC_RANGE_05)</option>
+              <option value="5">5: ±0.2 В (X502_ADC_RANGE_02)</option>
+            </select>
+          </div>
+          <div class="sim-field">
+            <label for="simAvg">Усреднение в ПЛИС (avg):</label>
+            <input type="number" id="simAvg" value="16" min="0" max="200" oninput="updateApiSim()">
+          </div>
+          <div class="sim-field">
+            <label for="simNoiseIn">Входной шум σ_вх (мВ):</label>
+            <input type="number" id="simNoiseIn" value="20" min="0" max="1000" step="1" oninput="updateApiSim()">
+          </div>
+          <div class="sim-field">
+            <label for="simDacV">Напряжение ЦАП1 (volts, В):</label>
+            <input type="number" id="simDacV" value="1.500" min="-10" max="10" step="0.25" oninput="updateApiSim()">
+          </div>
+        </div>
+
+        <pre id="simCodePreview"><code>int err1 = E502_StandSetChannelCount(&amp;dev, 6);
+int err2 = E502_StandConfigChannel(&amp;dev, 0, 0, 0, 0, 16);
+int err3 = E502_StandWriteDac(&amp;dev, X502_DAC_CH1, 1.500);</code></pre>
+
+        <div id="simStatusBox" class="sim-result callout-ok"></div>
+      </div>
+
+      <h3>Сводная таблица аппаратных поддиапазонов 16-разрядного АЦП</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Код <code>range</code></th>
+            <th>Константа драйвера <code>t_x502_adc_range</code></th>
+            <th>Рабочий диапазон напряжений</th>
+            <th>Номинальный вес МЗР (LSB = $2 U_{\max} / 2^{16}$)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>0</code></td><td><code>X502_ADC_RANGE_10</code></td><td>$-10.0 \dots +10.0\text{ В}$</td><td>$305.18\text{ мкВ}$</td></tr>
+          <tr><td><code>1</code></td><td><code>X502_ADC_RANGE_5</code></td><td>$-5.0 \dots +5.0\text{ В}$</td><td>$152.59\text{ мкВ}$</td></tr>
+          <tr><td><code>2</code></td><td><code>X502_ADC_RANGE_2</code></td><td>$-2.0 \dots +2.0\text{ В}$</td><td>$61.04\text{ мкВ}$</td></tr>
+          <tr><td><code>3</code></td><td><code>X502_ADC_RANGE_1</code></td><td>$-1.0 \dots +1.0\text{ В}$</td><td>$30.52\text{ мкВ}$</td></tr>
+          <tr><td><code>4</code></td><td><code>X502_ADC_RANGE_05</code></td><td>$-0.5 \dots +0.5\text{ В}$</td><td>$15.26\text{ мкВ}$</td></tr>
+          <tr><td><code>5</code></td><td><code>X502_ADC_RANGE_02</code></td><td>$-0.2 \dots +0.2\text{ В}$</td><td>$6.10\text{ мкВ}$</td></tr>
+        </tbody>
+      </table>
+
+      <div class="chapter-nav-footer">
+        <a href="#chap-3" class="chap-step-btn">&laquo; Назад: Глава 3. Справочник функций</a>
+        <a href="#chap-5" class="chap-step-btn">Далее: Глава 5. Методика лабораторной работы &raquo;</a>
+      </div>
+    </section>
+
+    <!-- ==================== ГЛАВА 5 ==================== -->
+    <section id="chap-5" class="chapter-section">
+      <h2>Глава 5. Методика выполнения лабораторной работы</h2>
+      <p>
+        Ниже приведён типовой сценарий выполнения лабораторного практикума (6 упражнений) с использованием графического рабочего места
+        <code>stand_gui.exe</code>.
+      </p>
+
+      <h3>Упражнение 1. Подключение к модулю и проверка канала связи</h3>
+      <ol>
+        <li>В <strong>Блоке 1</strong> нажмите кнопку <strong>[Поиск USB]</strong> и убедитесь, что в списке появился серийный номер <code>E502-SIM-0001</code> (или номер реального модуля).</li>
+        <li>Нажмите <strong>[Подкл. USB]</strong>. Проверьте, что строка состояния сменилась на <code>СТАТУС: ПОДКЛЮЧЕНО | ПЛИС: СИНХРОН.</code>, а в поле паспорта отобразились версия ПЛИС <code>v1.12</code> и ревизия платы <code>Рев.3</code>.</li>
+        <li>Нажмите кнопку <strong>[Тест LED1]</strong> и зафиксируйте вспышку индикатора <code>LED1</code> в правом верхнем углу экрана осциллографа.</li>
+      </ol>
+
+      <h3>Упражнение 2. Наблюдение многоканальных сигналов в режиме с общей землёй (COMM)</h3>
+      <ol>
+        <li>В <strong>Блоке 2</strong> установите число активных каналов <code>6</code>, нажмите <strong>[Задать число]</strong> и затем <strong>[Записать конфигурацию в ПЛИС (Apply)]</strong>.</li>
+        <li>Под экраном осциллографа нажмите <strong>[Старт опроса (20 Гц)]</strong>.</li>
+        <li>В сводной таблице снимите показания <code>МИН</code>, <code>МАКС</code> и <code>СКЗ Vrms</code> для первых четырёх каналов:
+          <code>LCH 0</code> (синусоида 2.5 В, теоретическое $V_{\text{rms}} = 2.5 / \sqrt{2} \approx 1.7678\text{ В}$),
+          <code>LCH 1</code> (меандр от $-1.6$ до $+2.0$ В),
+          <code>LCH 2</code> (треугольник),
+          <code>LCH 3</code> (пила).
+        </li>
+      </ol>
+
+      <h3>Упражнение 3. Проверка петли обратной связи ЦАП &rarr; АЦП (Loopback)</h3>
+      <ol>
+        <li>В <strong>Блоке 3</strong> введите в поле <code>ЦАП1 (В)</code> значение <code>+3.250</code> и нажмите <strong>[Выдать на ЦАП1]</strong>.</li>
+        <li>В поле <code>ЦАП2 (В)</code> введите <code>-4.100</code> и нажмите <strong>[Выдать на ЦАП2]</strong>.</li>
+        <li>В таблице измерений проверьте показания каналов <code>LCH 4</code> (физический вход 4, подключённый к ЦАП1) и <code>LCH 5</code> (физический вход 5, подключённый к ЦАП2).</li>
+        <li>Попробуйте ввести заведомо недопустимое напряжение <code>6.500</code> В и убедитесь, что защита возвращает ошибку <code>X502_ERR_INVALID_PARAMETER</code>.</li>
+      </ol>
+
+      <h3>Упражнение 4. Подавление шума за счёт аппаратного усреднения в ПЛИС</h3>
+      <ol>
+        <li>В <strong>Блоке 4</strong> выберите <code>Phy 4</code> (петля с ЦАП1), установите <code>Шум (В) = 0.2500</code> и нажмите <strong>[Обновить сигнал на физическом входе]</strong>. Зафиксируйте размах колебаний на канале <code>LCH 4</code> при <code>Уср = 0</code>.</li>
+        <li>В <strong>Блоке 2</strong> выберите <code>LCH 4</code>, введите <code>Уср = 64</code>, нажмите <strong>[Применить настройки к каналу LCH]</strong> и затем <strong>[Записать конфигурацию в ПЛИС (Apply)]</strong>.</li>
+        <li>Нажмите <strong>[Очистить экран]</strong> и убедитесь, что размах шумовой дорожки уменьшился в $\sqrt{64} = 8$ раз.</li>
+      </ol>
+
+      <h3>Упражнение 5. Исследование дифференциального режима измерения (DIFF)</h3>
+      <ol>
+        <li>В <strong>Блоке 4</strong> выберите <code>Phy 0</code> и задайте постоянное напряжение (<code>DC</code>) со смещением <code>+3.50 В</code>.</li>
+        <li>Выберите <code>Phy 16</code> (инверсный вход дифференциальной пары для канала 0) и задайте постоянное напряжение (<code>DC</code>) со смещением <code>+1.25 В</code>.</li>
+        <li>В <strong>Блоке 2</strong> для <code>LCH 0</code> выберите <code>Физ.вх = 0</code>, режим <code>1: DIFF (Дифференц.)</code>, нажмите <strong>[Применить настройки к каналу LCH]</strong> и <strong>[Записать конфигурацию в ПЛИС (Apply)]</strong>.</li>
+        <li>Убедитесь, что измеренное напряжение на <code>LCH 0</code> строго равно разности $3.50 - 1.25 = +2.2500\text{ В}$.</li>
+      </ol>
+
+      <div class="chapter-nav-footer">
+        <a href="#chap-4" class="chap-step-btn">&laquo; Назад: Глава 4. Тренажёр вызовов API</a>
+        <a href="#chap-6" class="chap-step-btn">Далее: Глава 6. Консольный режим (CLI) и тесты &raquo;</a>
+      </div>
+    </section>
+
+    <!-- ==================== ГЛАВА 6 ==================== -->
+    <section id="chap-6" class="chapter-section">
+      <h2>Глава 6. Консольный режим (CLI), ключи запуска и автоматическое тестирование</h2>
+      <p>
+        Помимо графического интерфейса, программный комплекс включает консольную утилиту <code>stand_cli.exe</code> для пакетного
+        управления и тестовый набор <code>test_stand.exe</code>.
+      </p>
+
+      <h3>Справочник команд интерактивной консоли <code>stand_cli.exe</code></h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Команда CLI</th>
+            <th>Вызываемая функция C API</th>
+            <th>Описание и пример использования</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>scan</code></td><td><code>E502_StandListUSB</code></td><td>Выводит список серийных номеров всех модулей E-502 на шине USB.</td></tr>
+          <tr><td><code>open [serial]</code></td><td><code>E502_StandConnectUSB</code></td><td>Открывает первый найденный модуль или прибор с указанным серийным номером.</td></tr>
+          <tr><td><code>open_ip &lt;ip&gt;</code></td><td><code>E502_StandConnectIP</code></td><td>Подключается к модулю по IPv4-адресу: <code>open_ip 192.168.1.100</code>.</td></tr>
+          <tr><td><code>close</code></td><td><code>E502_StandDisconnect</code></td><td>Закрывает текущее соединение и освобождает дескриптор.</td></tr>
+          <tr><td><code>status</code></td><td>Чтение <code>E502_StandDevice</code></td><td>Печатает паспорт прибора, статус синхронизации ПЛИС и таблицу активных каналов.</td></tr>
+          <tr><td><code>ch_cnt &lt;1..32&gt;</code></td><td><code>E502_StandSetChannelCount</code></td><td>Задаёт количество логических каналов: <code>ch_cnt 6</code>.</td></tr>
+          <tr><td><code>ch_cfg &lt;lch&gt; &lt;phy&gt; &lt;mode&gt; &lt;range&gt; &lt;avg&gt;</code></td><td><code>E502_StandConfigChannel</code></td><td>Настраивает слот таблицы АЦП: <code>ch_cfg 0 0 0 0 16</code>.</td></tr>
+          <tr><td><code>pullup &lt;hex_mask&gt;</code></td><td><code>E502_StandSetPullups</code></td><td>Задаёт шестнадцатеричную маску подтяжки: <code>pullup 0x04</code>.</td></tr>
+          <tr><td><code>apply</code></td><td><code>E502_StandApplyConfig</code></td><td>Записывает теневую конфигурацию в регистры ПЛИС.</td></tr>
+          <tr><td><code>read</code></td><td><code>E502_StandReadAdcFrame</code></td><td>Считывает и выводит один кадр напряжений АЦП в Вольтах.</td></tr>
+          <tr><td><code>dac &lt;1|2&gt; &lt;volts&gt;</code></td><td><code>E502_StandWriteDac</code></td><td>Устанавливает напряжение на выходе ЦАП: <code>dac 1 2.500</code>.</td></tr>
+          <tr><td><code>blink</code></td><td><code>E502_StandBlinkLed</code></td><td>Подает команду мигания светодиодом <code>LED1</code>.</td></tr>
+          <tr><td><code>help</code> / <code>exit</code></td><td>—</td><td>Вывод справки по командам / Безопасное завершение программы.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Сборка и запуск модульных автотестов (MSYS2 / MinGW-w64 GCC)</h3>
+      <pre><code># 1. Сборка графического рабочего места (Win32 GUI):
+gcc -Wall -Wextra -Werror -O2 main_gui.c e502_ctrl.c e502_sim.c -lgdi32 -lcomctl32 -lshell32 -lm -mwindows -o stand_gui.exe
+
+# 2. Сборка интерактивной консоли (CLI):
+gcc -Wall -Wextra -Werror -O2 main_cli.c e502_ctrl.c e502_sim.c -lm -o stand_cli.exe
+
+# 3. Сборка и запуск автоматических тестов (100% проверок):
+gcc -Wall -Wextra -Werror -O2 test_stand.c e502_ctrl.c e502_sim.c -lm -o test_stand.exe
+./test_stand.exe</code></pre>
+
+      <div class="chapter-nav-footer">
+        <a href="#chap-5" class="chap-step-btn">&laquo; Назад: Глава 5. Методика лабораторной работы</a>
+        <a href="#chap-1" class="chap-step-btn">Наверх к Главе 1 &uarr;</a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  /* Переключение вкладок разбора блоков UI (Глава 2) */
+  function showUiTab(panelId, btnEl) {
+    var panels = document.querySelectorAll('.ui-panel');
+    for (var i = 0; i < panels.length; i++) {
+      panels[i].classList.remove('active');
+    }
+    var btns = document.querySelectorAll('.ui-tab-btn');
+    for (var j = 0; j < btns.length; j++) {
+      btns[j].classList.remove('active');
+    }
+    var target = document.getElementById(panelId);
+    if (target) target.classList.add('active');
+    if (btnEl) btnEl.classList.add('active');
+  }
+
+  /* Фильтрация и поиск по карточкам функций (Глава 3) */
+  var currentFuncCategory = 'all';
+
+  function setFuncCategory(cat, btnEl) {
+    currentFuncCategory = cat;
+    var btns = document.querySelectorAll('.func-filter-btn');
+    for (var i = 0; i < 3; i++) {
+      if (btns[i]) btns[i].classList.remove('active');
+    }
+    if (btnEl) btnEl.classList.add('active');
+    filterFunctions();
+  }
+
+  function filterFunctions() {
+    var q = (document.getElementById('funcSearchInput').value || '').toLowerCase();
+    var cards = document.querySelectorAll('.func-card');
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      var cat = card.getAttribute('data-cat');
+      var text = card.textContent.toLowerCase();
+      var matchCat = (currentFuncCategory === 'all') || (cat === currentFuncCategory);
+      var matchQuery = (q === '') || (text.indexOf(q) !== -1);
+      card.style.display = (matchCat && matchQuery) ? 'block' : 'none';
+    }
+  }
+
+  function toggleAllFuncCards(collapse) {
+    var cards = document.querySelectorAll('.func-card');
+    for (var i = 0; i < cards.length; i++) {
+      if (collapse) cards[i].classList.add('collapsed');
+      else cards[i].classList.remove('collapsed');
+    }
+  }
+
+  /* Интерактивный тренажёр вызовов API и расчёта параметров АЦП (Глава 4) */
+  function updateApiSim() {
+    var lchCount = parseInt(document.getElementById('simLchCount').value, 10);
+    var lch      = parseInt(document.getElementById('simLch').value, 10);
+    var mode     = parseInt(document.getElementById('simMode').value, 10);
+    var phy      = parseInt(document.getElementById('simPhy').value, 10);
+    var range    = parseInt(document.getElementById('simRange').value, 10);
+    var avg      = parseInt(document.getElementById('simAvg').value, 10);
+    var noiseIn  = parseFloat(document.getElementById('simNoiseIn').value) || 0;
+    var dacV     = parseFloat(document.getElementById('simDacV').value);
+
+    var preview = document.getElementById('simCodePreview');
+    preview.innerHTML = '<code>int err1 = E502_StandSetChannelCount(&amp;dev, ' + lchCount + ');\n' +
+      'int err2 = E502_StandConfigChannel(&amp;dev, ' + lch + ', ' + phy + ', ' + mode + ', ' + range + ', ' + avg + ');\n' +
+      'int err3 = E502_StandWriteDac(&amp;dev, X502_DAC_CH1, ' + (isNaN(dacV) ? 'NaN' : dacV.toFixed(3)) + ');</code>';
+
+    var errors = [];
+    if (isNaN(lchCount) || lchCount === 0 || lchCount > 32) {
+      errors.push('E502_StandSetChannelCount → X502_ERR_INVALID_LCH_COUNT (-102): число каналов должно быть в диапазоне 1..32.');
+    }
+    if (isNaN(lch) || lch < 0 || lch >= lchCount || lch >= 32) {
+      errors.push('E502_StandConfigChannel → X502_ERR_INVALID_LCH_NUMBER (-103): индекс lch (' + lch + ') выходит за пределы 0 .. lch_count-1.');
+    }
+    if (mode === 1 && (phy < 0 || phy >= 16)) {
+      errors.push('E502_StandConfigChannel → X502_ERR_INVALID_LCH_PHY_NUMBER (-106): в режиме DIFF физический вход phy_ch должен быть в диапазоне 0..15.');
+    } else if (mode === 0 && (phy < 0 || phy >= 32)) {
+      errors.push('E502_StandConfigChannel → X502_ERR_INVALID_LCH_PHY_NUMBER (-106): в режиме COMM физический вход phy_ch должен быть в диапазоне 0..31.');
+    }
+    if (isNaN(avg) || avg < 0 || avg > 128) {
+      errors.push('E502_StandConfigChannel → X502_ERR_INVALID_LCH_AVG_SIZE (-107): коэффициент усреднения avg (' + avg + ') превышает максимум 128.');
+    }
+    if (isNaN(dacV) || dacV < -5.0 || dacV > 5.0) {
+      errors.push('E502_StandWriteDac → X502_ERR_INVALID_PARAMETER (-9): напряжение ЦАП (' + dacV + ' В) выходит за рабочий диапазон [-5.000; +5.000] В.');
+    }
+
+    var box = document.getElementById('simStatusBox');
+    var fsTable = [10.0, 5.0, 2.0, 1.0, 0.5, 0.2];
+    var fs = fsTable[range] || 10.0;
+    var lsbUv = (2.0 * fs / 65536.0) * 1e6;
+    var effAvg = (avg > 1) ? avg : 1;
+    var noiseOut = noiseIn / Math.sqrt(effAvg);
+
+    if (errors.length > 0) {
+      box.className = 'sim-result callout callout-warn';
+      box.innerHTML = '<strong>Защита API заблокировала некорректный вызов:</strong><br>• ' + errors.join('<br>• ');
+    } else {
+      box.className = 'sim-result callout callout-ok';
+      box.innerHTML = '<strong>Все вызовы корректны: возвращён код X502_ERR_OK (0).</strong><br>' +
+        '• Диапазон АЦП: ±' + fs + ' В | Вес младшего разряда (LSB): <strong>' + lsbUv.toFixed(2) + ' мкВ</strong><br>' +
+        '• Эффективный коэффициент усреднения в ПЛИС: <strong>' + effAvg + '</strong> (подавление шума в ' + Math.sqrt(effAvg).toFixed(2) + ' раз)<br>' +
+        '• Расчётное СКО шума после ПЛИС: <strong>' + noiseOut.toFixed(3) + ' мВ</strong> (при входном шуме ' + noiseIn.toFixed(1) + ' мВ)';
+    }
+  }
+
+  /* Подсветка активной главы при прокрутке */
+  window.addEventListener('scroll', function() {
+    var sections = document.querySelectorAll('.chapter-section');
+    var chapLinks = document.querySelectorAll('.chapter-bar .chap-link');
+    var scrollPos = window.scrollY + 120;
+    for (var i = 0; i < sections.length; i++) {
+      var top = sections[i].offsetTop;
+      var bottom = top + sections[i].offsetHeight;
+      if (scrollPos >= top && scrollPos < bottom) {
+        for (var j = 0; j < chapLinks.length; j++) {
+          chapLinks[j].classList.remove('active-chap');
+        }
+        if (chapLinks[i]) chapLinks[i].classList.add('active-chap');
+        break;
+      }
+    }
+  });
+
+  updateApiSim();
+</script>
+
+</body>
+</html>
