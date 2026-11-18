@@ -101,6 +101,10 @@ int main(int argc, char **argv)
     igDestroyContext(NULL);
     glfwDestroyWindow(window);
     glfwTerminate();
-    printf("GUI closed cleanly after %u rendered frames.\n", frames);
+    if (smoke_test && frames != 120) {
+        fprintf(stderr, "Window check incomplete: rendered %u of 120 frames.\n", frames);
+        return 1;
+    }
+    if (result == 0) printf("GUI closed cleanly after %u rendered frames.\n", frames);
     return result;
 }

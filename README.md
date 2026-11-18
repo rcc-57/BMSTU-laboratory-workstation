@@ -1,5 +1,6 @@
 # cimgui [![Build Status](https://travis-ci.org/cimgui/cimgui.svg?branch=master)](https://travis-ci.org/cimgui/cimgui)
 
+**Стенд АКИП-2205:** [сборка из исходников на Windows, подключение по USB и проверка показаний](measurement_app/README_how_to_start.md).
 
 This is a thin c-api wrapper programmatically generated for the excellent C++ immediate mode gui [Dear ImGui](https://github.com/ocornut/imgui).
 All imgui.h functions are programmatically wrapped.
